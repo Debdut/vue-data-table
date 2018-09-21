@@ -2,10 +2,10 @@
   table
     thead
       tr
-        th(v-for="cell in data.header") {{ cell }}
+        th(v-for="(cell, headerIndex) in data.header") {{ cell }}
     tbody
-      tr(v-for="row in data.body")
-        td(v-for="cell in row") {{ cell }}
+      tr(v-for="(row, rowIndex) in data.body")
+        td(v-for="(cell, colIndex) in row") {{ cell }}
 </template>
 
 <script>

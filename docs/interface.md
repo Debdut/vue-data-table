@@ -17,8 +17,8 @@ body = [
 ```
 ```ts
 header: Array<String>
-header: Array<Array>
-data: { Array<String>, Array<String> }
+body: Array<Array>
+data: { Array<String>, Array<Array> }
 ```
 
 | name   | age | job |
