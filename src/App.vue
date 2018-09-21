@@ -1,17 +1,24 @@
-<template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+<template lang="pug">
+  #app
+    data-table(:data="{ header, body }")
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import DataTable from './components/DataTable.vue'
 
 export default {
   name: 'app',
   components: {
-    HelloWorld
+    DataTable
+  },
+  data () {
+    return {
+      header: ['name', 'age', 'job'],
+      body: [
+        ['debdut', 21, 'NA'],
+        ['saikat', 20, 'NA']
+      ]
+    }
   }
 }
 </script>
