@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "serve": "^10.0.1",
+    "simple-line-icons": "^2.4.1",
     "vue": "^2.5.17"
   },
   "devDependencies": {
