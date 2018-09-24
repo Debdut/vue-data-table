@@ -2,13 +2,16 @@
   table
     thead
       tr
+        th(v-if="options.removeRow")
         th(v-for="(cell, headerIndex) in table.header")
           template(v-if="options.sort") {{ cell }}
-            span(class="icon-arrow-up-circle")
-            span(class="icon-arrow-down-circle")
+            span(class="icon-up" @click="sort(headerIndex, 'Descinding')") ↑
+            span(class="icon-down" @click="sort(headerIndex, 'Ascending')") ↓
           template(v-else) {{ cell }}
     tbody
       tr(v-for="(row, rowIndex) in table.body")
+        td(v-if="options.removeRow")
+          span(class="icon-cross" @click="deleteRow(rowIndex)") ×
         td(v-for="(cell, colIndex) in row" @click="edit(rowIndex, colIndex)")
           template(v-if="!options.edit") {{ cell }}
           template(v-else-if="(selected[0] === rowIndex && selected[1] === colIndex)")
@@ -103,6 +106,37 @@ export default {
         el.removeEventListener('focusout', null)
       })
     },
+    sort(headerIndex, whichSort) {
+      let temp
+      for(let i= 0; i < this.table.body.length-1; i++) {
+        for(let j =0; j < this.table.body.length-1-i; j++) {
+          if(whichSort === 'Ascending') {
+            if(this.table.body[j][headerIndex] > this.table.body[j+1][headerIndex]) {
+              temp = this.table.body[j]
+              this.table.body[j] = this.table.body[j+1]
+              this.table.body[j+1] = temp
+            }
+          }
+          else {
+            if(this.table.body[j][headerIndex] < this.table.body[j+1][headerIndex]) {
+              temp = this.table.body[j]
+              this.table.body[j] = this.table.body[j+1]
+              this.table.body[j+1] = temp
+            }
+          }
+        }
+      }
+      this.selected = []
+    },
+    deleteRow(row) {
+      let slicedArray = this.table.body.slice(row+1, this.table.body.length)
+      this.table.body = this.table.body.slice(0, row)
+
+      for (let i = 0; i < slicedArray.length; i++) {
+        this.table.body.push(slicedArray[i])
+      }
+      this.selected = []
+    },
     updateData(row, col) {
       if (this.form === 'array') {
         const property = this.table.header[col]
@@ -110,6 +144,7 @@ export default {
       } else if (this.form === 'object') {
         this.data.body[row][col] = this.table.body[row][col]
       }
+      this.selected = []
     }
   }
 }
