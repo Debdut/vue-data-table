@@ -12,7 +12,7 @@
         td(v-for="(cell, colIndex) in row" @click="edit(rowIndex, colIndex)")
           template(v-if="!options.edit") {{ cell }}
           template(v-else-if="(selected[0] === rowIndex && selected[1] === colIndex)")
-            input(v-model="table.body[rowIndex][colIndex]" :ref="`input-${rowIndex}-${colIndex}`")
+            input(v-model="table.body[rowIndex][colIndex]" :ref="`input-${rowIndex}-${colIndex}`" @change="updateData(rowIndex, colIndex)")
           template(v-else) {{ cell }}
 </template>
 
@@ -52,6 +52,10 @@ function dataToObject (data) {
   return { header, body }
 }
 
+function deepCopy (object) {
+  return JSON.parse(JSON.stringify(object))
+}
+
 export default {
   data () {
     return {
@@ -72,26 +76,40 @@ export default {
     options: Object
   },
   computed: {
+    form () {
+      if (Array.isArray(this.data)) {
+          return 'array'
+        }
+      return 'object'
+    },
     table: {
       get () {
-        if (Array.isArray(this.data)) {
+        if (this.form === 'array') {
           return dataToObject(this.data)
         }
-        return this.data
+        return deepCopy(this.data)
       }
     }
   },
   methods: {
-    edit (rowIndex, colIndex) {
-      this.selected = [rowIndex, colIndex]
+    edit (row, col) {
+      this.selected = [row, col]
       this.$nextTick(() => {
-        const el = this.$refs[`input-${rowIndex}-${colIndex}`][0]
+        const el = this.$refs[`input-${row}-${col}`][0]
         el.focus()
         el.addEventListener('focusout', () => {
           this.selected = []
         })
         el.removeEventListener('focusout', null)
       })
+    },
+    updateData(row, col) {
+      if (this.form === 'array') {
+        const property = this.table.header[col]
+        this.data[row][property] = this.table.body[row][col]
+      } else if (this.form === 'object') {
+        this.data.body[row][col] = this.table.body[row][col]
+      }
     }
   }
 }
