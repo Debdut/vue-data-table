@@ -1,6 +1,8 @@
 <template lang="pug">
   #app
-    data-table(:data="{ header, body }")
+    data-table(:data="data1" :options="{ edit: true , sort: true }")
+    data-table(:data="data1" :options="{ edit: true , sort: true }")
+
 </template>
 
 <script>
@@ -13,10 +15,16 @@ export default {
   },
   data () {
     return {
-      header: ['name', 'age', 'job'],
-      body: [
-        ['debdut', 21, 'NA'],
-        ['saikat', 20, 'NA']
+      data1: {
+        header: ['name', 'age', 'job'],
+        body: [
+          ['debdut', 23, 'NA'],
+          ['saikat', 20, 'NA']
+        ]
+      },
+      data2: [
+        { name: 'debdut', age: 21, job: 'NA' },
+        { name: 'saikat', age: 20, job: 'NA' }
       ]
     }
   }

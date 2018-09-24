@@ -2,7 +2,7 @@
 
 ## Data
 
-### Array Form
+### Object Form
 
 ```html
 <data-table :data="{ header, body }">
@@ -17,8 +17,8 @@ body = [
 ```
 ```ts
 header: Array<String>
-header: Array<Array>
-data: { Array<String>, Array<String> }
+body: Array<Array>
+data: { Array<String>, Array<Array> }
 ```
 
 | name   | age | job |
@@ -27,14 +27,14 @@ data: { Array<String>, Array<String> }
 | saikat | 20  | NA  |
 
 
-### Object Form
+### Array Form
 
 ```html
-<data-table :data="data" :options="{ form: 'object' }">
+<data-table :data="data">
 ```
 ```js
 data = [
-  {name: 'debdut', age: 21, job: 'NA'}
+  {name: 'debdut', age: 21, job: 'NA'},
   {name: 'saikat', age: 20, job: 'NA'}
 ]
 ```
@@ -54,7 +54,6 @@ data: Array<Object>
 
 ```ts
 options: {
-  form: String
   edit: Boolean
   
   sort: Boolean
@@ -111,7 +110,6 @@ options: {
 
 | Option         | Type                | Default | Choices           | Description                                                                                                                                                                                                                                                           |
 |----------------|---------------------|---------|-------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| form           | String              | 'array' | 'array'  'object' | Type of **data** prop passed in                                                                                                                                                                                                                                       |
 | edit           | Boolean             | false   | false  true       | If True, the table cells are editable, on click turns the cell into a input with present value                                                                                                                                                                        |
 | sort           | Boolean             | false   | false  true       | If True,all the table columns are sortable according to their values                                                                                                                                                                                                  |
 | compare        | function            |         |                   | The columns are sortable according to their values using the provided compare algorithm                                                                                                                                                                               |
