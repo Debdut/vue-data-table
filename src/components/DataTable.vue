@@ -2,21 +2,34 @@
   table
     thead
       tr
+        th(v-if="options.addRow")
         th(v-if="options.removeRow")
-        th(v-for="(cell, headerIndex) in table.header")
-          template(v-if="options.sort") {{ cell }}
+        th(v-for="(cell, headerIndex) in table.header" @click="editHead(headerIndex)")
+          //- template(v-if="options.addCol")
+          //-   span(class="icon-add-col-before" @click="insertCol(headerIndex)") ↲
+          //-   span(class="icon-add-col-after" @click="insertCol(headerIndex)") ↳
+          template(v-if="options.removeColumn")
+            span(class="icon-cross-col" @click="deleteCol(headerIndex)") ×
+          template(v-if="options.sort")
             span(class="icon-up" @click="sort(headerIndex, 'Descinding')") ↑
             span(class="icon-down" @click="sort(headerIndex, 'Ascending')") ↓
-          template(v-else) {{ cell }}
+          template(v-if="!options.edit") {{ cell }}
+          template(v-else-if="(selectedHead[0] === headerIndex)")
+            input(v-model="table.header[headerIndex]" :ref="`input-${headerIndex}`" @change="updateHeadData(headerIndex)")
+          template(v-else) {{ cell }}  
     tbody
       tr(v-for="(row, rowIndex) in table.body")
+        td(v-if="options.addRow")
+          span(class="icon-add-row-down" @click="insertRow(rowIndex, 'Down')") ↳
+          span(class="icon-add-row-up" @click="insertRow(rowIndex, 'Up')") ↱
         td(v-if="options.removeRow")
-          span(class="icon-cross" @click="deleteRow(rowIndex)") ×
-        td(v-for="(cell, colIndex) in row" @click="edit(rowIndex, colIndex)")
+          span(class="icon-cross-row" @click="deleteRow(rowIndex)") ×
+        td(v-for="(cell, colIndex) in row" @click="editBody(rowIndex, colIndex)")
           template(v-if="!options.edit") {{ cell }}
-          template(v-else-if="(selected[0] === rowIndex && selected[1] === colIndex)")
-            input(v-model="table.body[rowIndex][colIndex]" :ref="`input-${rowIndex}-${colIndex}`" @change="updateData(rowIndex, colIndex)")
+          template(v-else-if="(selectedBody[0] === rowIndex && selectedBody[1] === colIndex)")
+            input(v-model="table.body[rowIndex][colIndex]" :ref="`input-${rowIndex}-${colIndex}`" @change="updateBodyData(rowIndex, colIndex)")
           template(v-else) {{ cell }}
+      span(class="icon-reset" @click="reset()") ↻
 </template>
 
 <script>
@@ -59,10 +72,19 @@ function deepCopy (object) {
   return JSON.parse(JSON.stringify(object))
 }
 
+function format (data, form) {
+  if (form === 'array') {
+    return dataToObject(data)
+  }
+  return deepCopy(data)
+}
+
 export default {
   data () {
     return {
-      selected: []
+      selectedHead: [],
+      selectedBody: [],
+      table: format(this.data, this.form)
     }
   },
   props: {
@@ -84,24 +106,27 @@ export default {
           return 'array'
         }
       return 'object'
-    },
-    table: {
-      get () {
-        if (this.form === 'array') {
-          return dataToObject(this.data)
-        }
-        return deepCopy(this.data)
-      }
     }
   },
   methods: {
-    edit (row, col) {
-      this.selected = [row, col]
+    editBody(row, col) {
+      this.selectedBody = [row, col]
       this.$nextTick(() => {
         const el = this.$refs[`input-${row}-${col}`][0]
         el.focus()
         el.addEventListener('focusout', () => {
-          this.selected = []
+          this.selectedBody = []
+        })
+        el.removeEventListener('focusout', null)
+      })
+    },
+    editHead(head) {
+      this.selectedHead = [head]
+      this.$nextTick(() => {
+        const el = this.$refs[`input-${head}`][0]
+        el.focus()
+        el.addEventListener('focusout', () => {
+          this.selectedHead = []
         })
         el.removeEventListener('focusout', null)
       })
@@ -126,7 +151,24 @@ export default {
           }
         }
       }
-      this.selected = []
+      this.selectedBody = []
+    },
+    deleteCol(col) {
+      let slicedArray = this.table.header.slice(col+1, this.table.header.length)
+      this.table.header = this.table.header.slice(0, col)
+
+      for (let i = 0; i < slicedArray.length; i++) {
+        this.table.header.push(slicedArray[i])
+      }
+      for(let a = 0; a < this.table.body.length; a++) {
+        let slicedArray = this.table.body[a].slice(col+1, this.table.body[a].length)
+        this.table.body[a] = this.table.body[a].slice(0, col)
+
+        for (let i = 0; i < slicedArray.length; i++) {
+          this.table.body[a].push(slicedArray[i])
+        }
+      }
+      this.selectedBody = []
     },
     deleteRow(row) {
       let slicedArray = this.table.body.slice(row+1, this.table.body.length)
@@ -135,16 +177,40 @@ export default {
       for (let i = 0; i < slicedArray.length; i++) {
         this.table.body.push(slicedArray[i])
       }
-      this.selected = []
+      this.selectedBody = []
     },
-    updateData(row, col) {
+    reset () {
+      this.table = format(this.data, this.form)
+    },
+    insertRow(row, where) {
+      if(where === 'Down') {
+        row = row + 1
+      } else row = row
+
+      if(this.form === 'object') {
+        this.data.body.splice(row, 0, Array(this.table.header.length).fill(""))
+      } else this.data.splice(row, 0, {})
+
+      this.table.body.splice(row, 0, Array(this.table.header.length).fill(""))
+      this.selectedBody = []
+    },
+    // insertCol(headeIndex) {
+    // },
+    updateHeadData(head){
+      if(this.form ===  'array') {
+        
+      } else if(his.form === 'object'){
+        this.data.header[head] = this.table.header[head]
+      }
+    },
+    updateBodyData(row, col) {
       if (this.form === 'array') {
         const property = this.table.header[col]
         this.data[row][property] = this.table.body[row][col]
       } else if (this.form === 'object') {
         this.data.body[row][col] = this.table.body[row][col]
       }
-      this.selected = []
+      this.selectedBody = []
     }
   }
 }
