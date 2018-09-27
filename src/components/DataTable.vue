@@ -4,16 +4,16 @@
       tr
         th(v-if="options.addRow")
         th(v-if="options.removeRow")
-        th(v-for="(cell, headerIndex) in table.header" @click="editHead(headerIndex)")
+        th(v-for="(cell, headerIndex) in table.header")
           //- template(v-if="options.addCol")
           //-   span(class="icon-add-col-before" @click="insertCol(headerIndex)") ↲
           //-   span(class="icon-add-col-after" @click="insertCol(headerIndex)") ↳
           template(v-if="options.removeColumn")
             span(class="icon-cross-col" @click="deleteCol(headerIndex)") ×
           template(v-if="options.sort")
-            span(class="icon-up" @click="sort(headerIndex, 'Descinding')") ↑
-            span(class="icon-down" @click="sort(headerIndex, 'Ascending')") ↓
-          template(v-if="!options.edit") {{ cell }}
+            span(class="icon-up" @click="sort(headerIndex, false)") ↑
+            span(class="icon-down" @click="sort(headerIndex, true)") ↓
+          template(v-if="!options.edit" @click="editHead(headerIndex)") {{ cell }}
           template(v-else-if="(selectedHead[0] === headerIndex)")
             input(v-model="table.header[headerIndex]" :ref="`input-${headerIndex}`" @change="updateHeadData(headerIndex)")
           template(v-else) {{ cell }}  
@@ -131,23 +131,22 @@ export default {
         el.removeEventListener('focusout', null)
       })
     },
-    sort(headerIndex, whichSort) {
+    sort(headerIndex, up) {
+      const compareUp = (this.options
+        && this.options.column
+        && this.options.column[headerIndex]
+        && this.options.column[headerIndex].sortBy)
+        || (this.options && this.options.sortBy)
+        || ((a, b) => a > b);
+      const compare = (a, b) => (up) ? compareUp(a, b) : !compareUp(a, b)
+
       let temp
       for(let i= 0; i < this.table.body.length-1; i++) {
         for(let j =0; j < this.table.body.length-1-i; j++) {
-          if(whichSort === 'Ascending') {
-            if(this.table.body[j][headerIndex] > this.table.body[j+1][headerIndex]) {
-              temp = this.table.body[j]
-              this.table.body[j] = this.table.body[j+1]
-              this.table.body[j+1] = temp
-            }
-          }
-          else {
-            if(this.table.body[j][headerIndex] < this.table.body[j+1][headerIndex]) {
-              temp = this.table.body[j]
-              this.table.body[j] = this.table.body[j+1]
-              this.table.body[j+1] = temp
-            }
+          if(compare(this.table.body[j][headerIndex], this.table.body[j+1][headerIndex])) {
+            temp = this.table.body[j]
+            this.table.body[j] = this.table.body[j+1]
+            this.table.body[j+1] = temp
           }
         }
       }
