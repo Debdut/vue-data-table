@@ -220,7 +220,6 @@ export default {
         for(let i = 0; i < this.table.header.length; i++) {
           this.data[i][`${this.table.header[head]}`] = this.data[i][`${Object.keys(this.data[i])[head]}`]
           delete this.data[i][`${Object.keys(this.data[i])[head]}`]
-          head = head-1
         }
         console.log(head)
         console.log(this.data)
