@@ -4,16 +4,16 @@
       tr
         th(v-if="options.addRow")
         th(v-if="options.removeRow")
-        th(v-for="(cell, headerIndex) in table.header")
-          //- template(v-if="options.addCol")
-          //-   span(class="icon-add-col-before" @click="insertCol(headerIndex)") ↲
-          //-   span(class="icon-add-col-after" @click="insertCol(headerIndex)") ↳
+        th(v-for="(cell, headerIndex) in table.header" @click="editHead(headerIndex)")
+          template(v-if="options.addCol")
+            span(class="icon-add-col-before" @click="insertCol(headerIndex, 'Before')") ↲
+            span(class="icon-add-col-after" @click="insertCol(headerIndex, 'After')") ↳
           template(v-if="options.removeColumn")
             span(class="icon-cross-col" @click="deleteCol(headerIndex)") ×
           template(v-if="options.sort")
             span(class="icon-up" @click="sort(headerIndex, false)") ↑
             span(class="icon-down" @click="sort(headerIndex, true)") ↓
-          template(v-if="!options.edit" @click="editHead(headerIndex)") {{ cell }}
+          template(v-if="!options.edit") {{ cell }}
           template(v-else-if="(selectedHead[0] === headerIndex)")
             input(v-model="table.header[headerIndex]" :ref="`input-${headerIndex}`" @change="updateHeadData(headerIndex)")
           template(v-else) {{ cell }}  
@@ -193,14 +193,41 @@ export default {
       this.table.body.splice(row, 0, Array(this.table.header.length).fill(""))
       this.selectedBody = []
     },
-    // insertCol(headeIndex) {
-    // },
+    insertCol(head, where) {
+      if(where === 'After') {
+        head = head + 1
+      } else head = head
+
+      if(this.form === 'object') {
+        this.data.header.splice(head, 0, "")
+        for(let i = 0; i < this.table.body.length; i++) {
+          this.data.body[i].splice(head, 0, "")
+        }
+      } else if(this.form === 'array') {
+
+      }
+
+      this.table.header.splice(head, 0, "")
+      for(let i = 0; i < this.table.body.length; i++) {
+        this.table.body[i].splice(head, 0, "")
+      }
+
+      this.selectedBody = []
+      this.selectedHead = []
+    },
     updateHeadData(head){
       if(this.form ===  'array') {
-        
-      } else if(his.form === 'object'){
+        for(let i = 0; i < this.table.header.length; i++) {
+          this.data[i][`${this.table.header[head]}`] = this.data[i][`${Object.keys(this.data[i])[head]}`]
+          delete this.data[i][`${Object.keys(this.data[i])[head]}`]
+          head = head-1
+        }
+        console.log(head)
+        console.log(this.data)
+      } else if(this.form === 'object'){
         this.data.header[head] = this.table.header[head]
       }
+      this.selectedHead = []
     },
     updateBodyData(row, col) {
       if (this.form === 'array') {
