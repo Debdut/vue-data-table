@@ -16,7 +16,7 @@
           template(v-if="!options.edit") {{ cell }}
           template(v-else-if="(selectedHead[0] === headerIndex)")
             input(v-model="table.header[headerIndex]" :ref="`input-${headerIndex}`" @change="updateHeadData(headerIndex)")
-          template(v-else) {{ cell }}  
+          template(v-else) {{ cell }}
     tbody
       tr(v-for="(row, rowIndex) in table.body")
         td(v-if="options.addRow")
@@ -103,13 +103,13 @@ export default {
   computed: {
     form () {
       if (Array.isArray(this.data)) {
-          return 'array'
-        }
+        return 'array'
+      }
       return 'object'
     }
   },
   methods: {
-    editBody(row, col) {
+    editBody (row, col) {
       this.selectedBody = [row, col]
       this.$nextTick(() => {
         const el = this.$refs[`input-${row}-${col}`][0]
@@ -120,7 +120,7 @@ export default {
         el.removeEventListener('focusout', null)
       })
     },
-    editHead(head) {
+    editHead (head) {
       this.selectedHead = [head]
       this.$nextTick(() => {
         const el = this.$refs[`input-${head}`][0]
@@ -131,36 +131,36 @@ export default {
         el.removeEventListener('focusout', null)
       })
     },
-    sort(headerIndex, up) {
-      const compareUp = (this.options
-        && this.options.column
-        && this.options.column[headerIndex]
-        && this.options.column[headerIndex].sortBy)
-        || (this.options && this.options.sortBy)
-        || ((a, b) => a > b);
+    sort (headerIndex, up) {
+      const compareUp = (this.options &&
+        this.options.column &&
+        this.options.column[headerIndex] &&
+        this.options.column[headerIndex].sortBy) ||
+        (this.options && this.options.sortBy) ||
+        ((a, b) => a > b)
       const compare = (a, b) => (up) ? compareUp(a, b) : !compareUp(a, b)
 
       let temp
-      for(let i= 0; i < this.table.body.length-1; i++) {
-        for(let j =0; j < this.table.body.length-1-i; j++) {
-          if(compare(this.table.body[j][headerIndex], this.table.body[j+1][headerIndex])) {
+      for (let i = 0; i < this.table.body.length - 1; i++) {
+        for (let j = 0; j < this.table.body.length - 1 - i; j++) {
+          if (compare(this.table.body[j][headerIndex], this.table.body[j + 1][headerIndex])) {
             temp = this.table.body[j]
-            this.table.body[j] = this.table.body[j+1]
-            this.table.body[j+1] = temp
+            this.table.body[j] = this.table.body[j + 1]
+            this.table.body[j + 1] = temp
           }
         }
       }
       this.selectedBody = []
     },
-    deleteCol(col) {
-      let slicedArray = this.table.header.slice(col+1, this.table.header.length)
+    deleteCol (col) {
+      let slicedArray = this.table.header.slice(col + 1, this.table.header.length)
       this.table.header = this.table.header.slice(0, col)
 
       for (let i = 0; i < slicedArray.length; i++) {
         this.table.header.push(slicedArray[i])
       }
-      for(let a = 0; a < this.table.body.length; a++) {
-        let slicedArray = this.table.body[a].slice(col+1, this.table.body[a].length)
+      for (let a = 0; a < this.table.body.length; a++) {
+        let slicedArray = this.table.body[a].slice(col + 1, this.table.body[a].length)
         this.table.body[a] = this.table.body[a].slice(0, col)
 
         for (let i = 0; i < slicedArray.length; i++) {
@@ -169,8 +169,8 @@ export default {
       }
       this.selectedBody = []
     },
-    deleteRow(row) {
-      let slicedArray = this.table.body.slice(row+1, this.table.body.length)
+    deleteRow (row) {
+      let slicedArray = this.table.body.slice(row + 1, this.table.body.length)
       this.table.body = this.table.body.slice(0, row)
 
       for (let i = 0; i < slicedArray.length; i++) {
@@ -181,54 +181,54 @@ export default {
     reset () {
       this.table = format(this.data, this.form)
     },
-    insertRow(row, where) {
-      if(where === 'Down') {
+    insertRow (row, where) {
+      if (where === 'Down') {
         row = row + 1
-      } else row = row
+      }
 
-      if(this.form === 'object') {
-        this.data.body.splice(row, 0, Array(this.table.header.length).fill(""))
+      if (this.form === 'object') {
+        this.data.body.splice(row, 0, Array(this.table.header.length).fill(''))
       } else this.data.splice(row, 0, {})
 
-      this.table.body.splice(row, 0, Array(this.table.header.length).fill(""))
+      this.table.body.splice(row, 0, Array(this.table.header.length).fill(''))
       this.selectedBody = []
     },
-    insertCol(head, where) {
-      if(where === 'After') {
+    insertCol (head, where) {
+      if (where === 'After') {
         head = head + 1
-      } else head = head
+      }
 
-      if(this.form === 'object') {
-        this.data.header.splice(head, 0, "")
-        for(let i = 0; i < this.table.body.length; i++) {
-          this.data.body[i].splice(head, 0, "")
+      if (this.form === 'object') {
+        this.data.header.splice(head, 0, '')
+        for (let i = 0; i < this.table.body.length; i++) {
+          this.data.body[i].splice(head, 0, '')
         }
-      } else if(this.form === 'array') {
+      } else if (this.form === 'array') {
 
       }
 
-      this.table.header.splice(head, 0, "")
-      for(let i = 0; i < this.table.body.length; i++) {
-        this.table.body[i].splice(head, 0, "")
+      this.table.header.splice(head, 0, '')
+      for (let i = 0; i < this.table.body.length; i++) {
+        this.table.body[i].splice(head, 0, '')
       }
 
       this.selectedBody = []
       this.selectedHead = []
     },
-    updateHeadData(head){
-      if(this.form ===  'array') {
-        for(let i = 0; i < this.table.header.length; i++) {
+    updateHeadData (head) {
+      if (this.form === 'array') {
+        for (let i = 0; i < this.table.header.length; i++) {
           this.data[i][`${this.table.header[head]}`] = this.data[i][`${Object.keys(this.data[i])[head]}`]
           delete this.data[i][`${Object.keys(this.data[i])[head]}`]
         }
         console.log(head)
         console.log(this.data)
-      } else if(this.form === 'object'){
+      } else if (this.form === 'object') {
         this.data.header[head] = this.table.header[head]
       }
       this.selectedHead = []
     },
-    updateBodyData(row, col) {
+    updateBodyData (row, col) {
       if (this.form === 'array') {
         const property = this.table.header[col]
         this.data[row][property] = this.table.body[row][col]
