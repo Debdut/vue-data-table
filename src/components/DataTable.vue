@@ -64,7 +64,7 @@ const validators = {
 
 function dataToObject (data) {
   let header = Object.keys(data[0])
-  let body = data.map((e) => Object.values(e))
+  let body = data.map((e) => header.map(h => e[h]))
   return { header, body }
 }
 
