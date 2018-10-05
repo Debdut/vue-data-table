@@ -62,10 +62,21 @@ const validators = {
   }
 }
 
-function dataToObject (data) {
+function dataToObject (data) { // converts a array form to object form
   let header = Object.keys(data[0])
   let body = data.map((e) => header.map(h => e[h]))
   return { header, body }
+}
+
+function dataToArray (obj) { // converts a object form to array form
+  let data = []
+  for (let i = 0; i < obj.body.length; i++) {
+    data[i] = {}
+    for (let j = 0; j < obj.header.length; j++) {
+      data[i][obj.header[j]] = obj.body[i][j]
+    }
+  }
+  return data
 }
 
 function deepCopy (object) {
@@ -204,7 +215,7 @@ export default {
           this.data.body[i].splice(head, 0, '')
         }
       } else if (this.form === 'array') {
-
+        
       }
 
       this.table.header.splice(head, 0, '')
@@ -220,9 +231,8 @@ export default {
         for (let i = 0; i < this.table.header.length; i++) {
           this.data[i][`${this.table.header[head]}`] = this.data[i][`${Object.keys(this.data[i])[head]}`]
           delete this.data[i][`${Object.keys(this.data[i])[head]}`]
+          this.data = dataToArray(this.table)
         }
-        console.log(head)
-        console.log(this.data)
       } else if (this.form === 'object') {
         this.data.header[head] = this.table.header[head]
       }
