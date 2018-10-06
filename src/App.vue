@@ -1,6 +1,6 @@
 <template lang="pug">
   #app
-    data-table(:data="data2" :options="{ edit: true , sort: true, removeRow: true, removeColumn: true, addRow: true, addCol: true}")
+    data-table(:data="data1" :options="{ edit: true , sort: true, removeRow: true, removeColumn: true, addRow: true, addCol: true, filter: true}")
 
 </template>
 

@@ -17,6 +17,9 @@
           template(v-else-if="(selectedHead[0] === headerIndex)")
             input(v-model="table.header[headerIndex]" :ref="`input-${headerIndex}`" @change="updateHeadData(headerIndex)")
           template(v-else) {{ cell }}
+          template(v-if="options.filter")
+            input(v-model="searchedValue" @change="filterTable(headerIndex)")
+
     tbody
       tr(v-for="(row, rowIndex) in table.body")
         td(v-if="options.addRow")
@@ -95,7 +98,8 @@ export default {
     return {
       selectedHead: [],
       selectedBody: [],
-      table: format(this.data, this.form)
+      table: format(this.data, this.form),
+      searchedValue: ''
     }
   },
   props: {
@@ -214,8 +218,7 @@ export default {
         for (let i = 0; i < this.table.body.length; i++) {
           this.data.body[i].splice(head, 0, '')
         }
-      } else if (this.form === 'array') {
-        
+      } else if (this.form === 'array') { // This must be filluped
       }
 
       this.table.header.splice(head, 0, '')
@@ -225,6 +228,24 @@ export default {
 
       this.selectedBody = []
       this.selectedHead = []
+    },
+    filterTable (head) {
+      console.log('hfjcj')
+      if (this.form === 'object') {
+        for (let i = 0; i < this.table.body.length; i++) {
+          console.log(`${this.table.body[i][head]}`)
+          console.log(`${this.searchedValue}`)
+          if (`${this.table.body[i][head]}`.includes(`${this.searchedValue}`) === false) {
+            for (let j = 0; j < this.table.body.length; j++) {
+              for (let k = 0; k < this.table.header.length; k++) {
+                if (`${this.table.body[i][head]}` === `${this.table.body[j][k]}`) {
+                  this.deleteRow(j)
+                }
+              }
+            }
+          }
+        }
+      }
     },
     updateHeadData (head) {
       if (this.form === 'array') {
