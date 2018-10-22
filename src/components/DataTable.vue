@@ -4,7 +4,7 @@
       tr
         th(v-if="options.addRow")
         th(v-if="options.removeRow")
-        th(v-for="(cell, headerIndex) in table.header" @click="editHead(headerIndex)")
+        th(v-for="(cell, headerIndex) in table.header" @click="editHead(headerIndex)" :style="{color : options.headerStyle.fontColor, background : options.headerStyle.backgroundColor}")
           template(v-if="options.addCol")
             span(class="icon-add-col-before" @click="insertCol(headerIndex, 'Before')") ↲
             span(class="icon-add-col-after" @click="insertCol(headerIndex, 'After')") ↳
@@ -27,7 +27,7 @@
           span(class="icon-add-row-up" @click="insertRow(rowIndex, 'Up')") ↱
         td(v-if="options.removeRow")
           span(class="icon-cross-row" @click="deleteRow(rowIndex)") ×
-        td(v-for="(cell, colIndex) in row" @click="editBody(rowIndex, colIndex)")
+        td(v-for="(cell, colIndex) in row" @click="editBody(rowIndex, colIndex)" :style="{color : options.tableStyle.fontColor, background : options.tableStyle.backgroundColor}")
           template(v-if="!options.edit") {{ cell }}
           template(v-else-if="(selectedBody[0] === rowIndex && selectedBody[1] === colIndex)")
             input(v-model="table.body[rowIndex][colIndex]" :ref="`input-${rowIndex}-${colIndex}`" @change="updateBodyData(rowIndex, colIndex)")
@@ -234,19 +234,20 @@ export default {
       this.selectedHead = []
     },
     filterTable (head) {
-      console.log('hfjcj')
+      console.log('hello')
       if (this.form === 'object') {
-        for (let i = 0; i < this.table.body.length; i++) {
-          console.log(`${this.table.body[i][head]}`)
+        for (let i = 0; i < this.data.body.length; i++) {
+          console.log(`${this.data.body[i][head]}`)
           console.log(`${this.searchedValue}`)
-          if (`${this.table.body[i][head]}`.includes(`${this.searchedValue}`) === false) {
-            for (let j = 0; j < this.table.body.length; j++) {
-              for (let k = 0; k < this.table.header.length; k++) {
-                if (`${this.table.body[i][head]}` === `${this.table.body[j][k]}`) {
-                  this.deleteRow(j)
-                }
-              }
-            }
+          console.log(head)
+          if (`${this.data.body[i][head]}`.includes(`${this.searchedValue}`) === false) {
+            // for (let j = 0; j < this.data.body.length; j++) {
+            //   for (let k = 0; k < this.data.header.length; k++) {
+            //     if (`${this.data.body[i][head]}` === `${this.data.body[j][k]}`) {
+            this.deleteRow(i)
+            //     }
+            //   }
+            // }
           }
         }
       }
