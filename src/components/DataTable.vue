@@ -218,12 +218,16 @@ export default {
         for (let i = 0; i < this.table.body.length; i++) {
           this.data.body[i].splice(head, 0, '')
         }
-      } else if (this.form === 'array') { // This must be filluped
-      }
-
-      this.table.header.splice(head, 0, '')
-      for (let i = 0; i < this.table.body.length; i++) {
-        this.table.body[i].splice(head, 0, '')
+        this.table.header.splice(head, 0, '')
+        for (let i = 0; i < this.table.body.length; i++) {
+          this.table.body[i].splice(head, 0, '')
+        }
+      } else if (this.form === 'array') {
+        this.table.header.splice(head, 0, '')
+        for (let i = 0; i < this.table.body.length; i++) {
+          this.table.body[i].splice(head, 0, '')
+        }
+        this.data = dataToArray(this.table)
       }
 
       this.selectedBody = []
