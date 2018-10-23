@@ -40,5 +40,16 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+
+  .table-red {
+    color: red;
+    background: blue;
+    border-radius: 2px
+  }
+  .header-red {
+    color: red;
+    background: blue
+  }
+
 }
 </style>

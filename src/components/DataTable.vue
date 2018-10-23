@@ -4,21 +4,38 @@
       tr
         th(v-if="options.addRow")
         th(v-if="options.removeRow")
-        th(v-for="(cell, headerIndex) in table.header" @click="editHead(headerIndex)" :style="{color : options.headerStyle.fontColor, background : options.headerStyle.backgroundColor}")
-          template(v-if="options.addCol")
-            span(class="icon-add-col-before" @click="insertCol(headerIndex, 'Before')") ↲
-            span(class="icon-add-col-after" @click="insertCol(headerIndex, 'After')") ↳
-          template(v-if="options.removeColumn")
-            span(class="icon-cross-col" @click="deleteCol(headerIndex)") ×
-          template(v-if="options.sort")
-            span(class="icon-up" @click="sort(headerIndex, false)") ↑
-            span(class="icon-down" @click="sort(headerIndex, true)") ↓
-          template(v-if="!options.edit") {{ cell }}
-          template(v-else-if="(selectedHead[0] === headerIndex)")
-            input(v-model="table.header[headerIndex]" :ref="`input-${headerIndex}`" @change="updateHeadData(headerIndex)")
-          template(v-else) {{ cell }}
-          template(v-if="options.filter")
-            input(v-model="searchedValue" @change="filterTable(headerIndex)")
+        template(v-if="typeof options.headerStyle === 'object'")
+          th(v-for="(cell, headerIndex) in table.header" @click="editHead(headerIndex)"  :style="{color : options.headerStyle.fontColor, background : options.headerStyle.backgroundColor}")
+            template(v-if="options.addCol")
+              span(class="icon-add-col-before" @click="insertCol(headerIndex, 'Before')") ↲
+              span(class="icon-add-col-after" @click="insertCol(headerIndex, 'After')") ↳
+            template(v-if="options.removeColumn")
+              span(class="icon-cross-col" @click="deleteCol(headerIndex)") ×
+            template(v-if="options.sort")
+              span(class="icon-up" @click="sort(headerIndex, false)") ↑
+              span(class="icon-down" @click="sort(headerIndex, true)") ↓
+            template(v-if="!options.edit") {{ cell }}
+            template(v-else-if="(selectedHead[0] === headerIndex)")
+              input(v-model="table.header[headerIndex]" :ref="`input-${headerIndex}`" @change="updateHeadData(headerIndex)")
+            template(v-else) {{ cell }}
+            template(v-if="options.filter")
+              input(v-model="searchedValue" @change="filterTable(headerIndex)")
+        template(v-else)
+          th(v-for="(cell, headerIndex) in table.header" @click="editHead(headerIndex)"  class="table-red")
+            template(v-if="options.addCol")
+              span(class="icon-add-col-before" @click="insertCol(headerIndex, 'Before')") ↲
+              span(class="icon-add-col-after" @click="insertCol(headerIndex, 'After')") ↳
+            template(v-if="options.removeColumn")
+              span(class="icon-cross-col" @click="deleteCol(headerIndex)") ×
+            template(v-if="options.sort")
+              span(class="icon-up" @click="sort(headerIndex, false)") ↑
+              span(class="icon-down" @click="sort(headerIndex, true)") ↓
+            template(v-if="!options.edit") {{ cell }}
+            template(v-else-if="(selectedHead[0] === headerIndex)")
+              input(v-model="table.header[headerIndex]" :ref="`input-${headerIndex}`" @change="updateHeadData(headerIndex)")
+            template(v-else) {{ cell }}
+            template(v-if="options.filter")
+              input(v-model="searchedValue" @change="filterTable(headerIndex)")
 
     tbody
       tr(v-for="(row, rowIndex) in table.body")
@@ -27,11 +44,18 @@
           span(class="icon-add-row-up" @click="insertRow(rowIndex, 'Up')") ↱
         td(v-if="options.removeRow")
           span(class="icon-cross-row" @click="deleteRow(rowIndex)") ×
-        td(v-for="(cell, colIndex) in row" @click="editBody(rowIndex, colIndex)" :style="{color : options.tableStyle.fontColor, background : options.tableStyle.backgroundColor}")
-          template(v-if="!options.edit") {{ cell }}
-          template(v-else-if="(selectedBody[0] === rowIndex && selectedBody[1] === colIndex)")
-            input(v-model="table.body[rowIndex][colIndex]" :ref="`input-${rowIndex}-${colIndex}`" @change="updateBodyData(rowIndex, colIndex)")
-          template(v-else) {{ cell }}
+        template(v-if="typeof options.tableStyle === 'object'")
+          td(v-for="(cell, colIndex) in row" @click="editBody(rowIndex, colIndex)"  :style="{color : options.tableStyle.fontColor, background : options.tableStyle.backgroundColor}")
+            template(v-if="!options.edit") {{ cell }}
+            template(v-else-if="(selectedBody[0] === rowIndex && selectedBody[1] === colIndex)")
+              input(v-model="table.body[rowIndex][colIndex]" :ref="`input-${rowIndex}-${colIndex}`" @change="updateBodyData(rowIndex, colIndex)")
+            template(v-else) {{ cell }}
+        template(v-else)
+          td(v-for="(cell, colIndex) in row" @click="editBody(rowIndex, colIndex)"  class="header-red")
+            template(v-if="!options.edit") {{ cell }}
+            template(v-else-if="(selectedBody[0] === rowIndex && selectedBody[1] === colIndex)")
+              input(v-model="table.body[rowIndex][colIndex]" :ref="`input-${rowIndex}-${colIndex}`" @change="updateBodyData(rowIndex, colIndex)")
+            template(v-else) {{ cell }}
       span(class="icon-reset" @click="reset()") ↻
 </template>
 
