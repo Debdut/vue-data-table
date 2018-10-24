@@ -1,6 +1,6 @@
 <template lang="pug">
   #app
-    data-table(:data="data1" :options="{ edit: true , sort: true, removeRow: true, removeColumn: true, addRow: true, addCol: true, filter: true, tableStyle: { backgroundColor : '#e3e4e5', fontColor : '#4286f4'}, headerStyle: { backgroundColor : '#c6c3c2', fontColor : '#ef6976'}}")
+    data-table(:data="data1" :column="column" :options="{ edit: true , sort: true, removeRow: true, removeColumn: true, addRow: true, addCol: true, filter: true, tableStyle: { backgroundColor : '#e3e4e5', fontColor : '#4286f4'}, headerStyle: { backgroundColor : '#c6c3c2', fontColor : '#ef6976'}}")
 
 </template>
 
@@ -26,6 +26,23 @@ export default {
         { name: 'debdut', age: 21, job: 'NA' },
         { name: 'saikat', age: 20, job: 'NA' },
         { name: 'babu', age: 37, job: 'NA' }
+      ],
+      column: [
+        {
+          edit: true,
+          sort: true,
+          remove: true
+        },
+        {
+          edit: false,
+          sort: false,
+          remove: false
+        },
+        {
+          edit: true,
+          sort: true,
+          remove: true
+        }
       ]
     }
   }

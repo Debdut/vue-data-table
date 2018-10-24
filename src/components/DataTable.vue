@@ -123,7 +123,8 @@ export default {
       selectedHead: [],
       selectedBody: [],
       table: format(this.data, this.form),
-      searchedValue: ''
+      searchedValue: '',
+      virtualColumn: this.column
     }
   },
   props: {
@@ -137,7 +138,8 @@ export default {
         return validators['object'](val)
       }
     },
-    options: Object
+    options: Object,
+    column: Array
   },
   computed: {
     form () {
@@ -149,15 +151,17 @@ export default {
   },
   methods: {
     editBody (row, col) {
-      this.selectedBody = [row, col]
-      this.$nextTick(() => {
-        const el = this.$refs[`input-${row}-${col}`][0]
-        el.focus()
-        el.addEventListener('focusout', () => {
-          this.selectedBody = []
+      if (this.virtualColumn[col].edit === true) {
+        this.selectedBody = [row, col]
+        this.$nextTick(() => {
+          const el = this.$refs[`input-${row}-${col}`][0]
+          el.focus()
+          el.addEventListener('focusout', () => {
+            this.selectedBody = []
+          })
+          el.removeEventListener('focusout', null)
         })
-        el.removeEventListener('focusout', null)
-      })
+      }
     },
     editHead (head) {
       this.selectedHead = [head]
@@ -171,40 +175,45 @@ export default {
       })
     },
     sort (headerIndex, up) {
-      const compareUp = (this.options &&
+      if (this.virtualColumn[headerIndex].sort === true) {
+        const compareUp = (this.options &&
         this.options.column &&
         this.options.column[headerIndex] &&
         this.options.column[headerIndex].sortBy) ||
         (this.options && this.options.sortBy) ||
         ((a, b) => a > b)
-      const compare = (a, b) => (up) ? compareUp(a, b) : !compareUp(a, b)
+        const compare = (a, b) => (up) ? compareUp(a, b) : !compareUp(a, b)
 
-      let temp
-      for (let i = 0; i < this.table.body.length - 1; i++) {
-        for (let j = 0; j < this.table.body.length - 1 - i; j++) {
-          if (compare(this.table.body[j][headerIndex], this.table.body[j + 1][headerIndex])) {
-            temp = this.table.body[j]
-            this.table.body[j] = this.table.body[j + 1]
-            this.table.body[j + 1] = temp
+        let temp
+        for (let i = 0; i < this.table.body.length - 1; i++) {
+          for (let j = 0; j < this.table.body.length - 1 - i; j++) {
+            if (compare(this.table.body[j][headerIndex], this.table.body[j + 1][headerIndex])) {
+              temp = this.table.body[j]
+              this.table.body[j] = this.table.body[j + 1]
+              this.table.body[j + 1] = temp
+            }
           }
         }
       }
       this.selectedBody = []
     },
     deleteCol (col) {
-      let slicedArray = this.table.header.slice(col + 1, this.table.header.length)
-      this.table.header = this.table.header.slice(0, col)
-
-      for (let i = 0; i < slicedArray.length; i++) {
-        this.table.header.push(slicedArray[i])
-      }
-      for (let a = 0; a < this.table.body.length; a++) {
-        let slicedArray = this.table.body[a].slice(col + 1, this.table.body[a].length)
-        this.table.body[a] = this.table.body[a].slice(0, col)
+      if (this.virtualColumn[col].remove === true) {
+        let slicedArray = this.table.header.slice(col + 1, this.table.header.length)
+        this.table.header = this.table.header.slice(0, col)
 
         for (let i = 0; i < slicedArray.length; i++) {
-          this.table.body[a].push(slicedArray[i])
+          this.table.header.push(slicedArray[i])
         }
+        for (let a = 0; a < this.table.body.length; a++) {
+          let slicedArray = this.table.body[a].slice(col + 1, this.table.body[a].length)
+          this.table.body[a] = this.table.body[a].slice(0, col)
+
+          for (let i = 0; i < slicedArray.length; i++) {
+            this.table.body[a].push(slicedArray[i])
+          }
+        }
+        this.virtualColumn.splice(col, 1)
       }
       this.selectedBody = []
     },
@@ -253,7 +262,7 @@ export default {
         }
         this.data = dataToArray(this.table)
       }
-
+      this.virtualColumn.splice(head, 0, { edit: true, sort: true, remove: true })
       this.selectedBody = []
       this.selectedHead = []
     },
