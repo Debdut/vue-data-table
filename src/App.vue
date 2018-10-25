@@ -31,17 +31,26 @@ export default {
         {
           edit: true,
           sort: true,
-          remove: true
+          remove: true,
+          type: 'text',
+          maxTextSize: 10,
+          colStyle: { backgroundColor: 'red', fontColor: 'green' }
         },
         {
-          edit: false,
+          edit: true,
           sort: false,
-          remove: false
+          remove: false,
+          type: 'number',
+          maxTextSize: 10,
+          colStyle: { backgroundColor: 'blue', fontColor: 'yellow' }
         },
         {
           edit: true,
           sort: true,
-          remove: true
+          remove: true,
+          type: 'text',
+          maxTextSize: 10,
+          colStyle: { backgroundColor: 'grey', fontColor: 'black' }
         }
       ]
     }

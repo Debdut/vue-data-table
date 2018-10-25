@@ -48,13 +48,13 @@
           td(v-for="(cell, colIndex) in row" @click="editBody(rowIndex, colIndex)"  :style="{color : options.tableStyle.fontColor, background : options.tableStyle.backgroundColor}")
             template(v-if="!options.edit") {{ cell }}
             template(v-else-if="(selectedBody[0] === rowIndex && selectedBody[1] === colIndex)")
-              input(v-model="table.body[rowIndex][colIndex]" :ref="`input-${rowIndex}-${colIndex}`" @change="updateBodyData(rowIndex, colIndex)")
+              input(v-model="table.body[rowIndex][colIndex]" :ref="`input-${rowIndex}-${colIndex}`" :type="`${column[colIndex].type}`" :maxlength="`${column[colIndex].maxTextSize}`" @change="updateBodyData(rowIndex, colIndex)")
             template(v-else) {{ cell }}
         template(v-else)
           td(v-for="(cell, colIndex) in row" @click="editBody(rowIndex, colIndex)"  class="header-red")
             template(v-if="!options.edit") {{ cell }}
             template(v-else-if="(selectedBody[0] === rowIndex && selectedBody[1] === colIndex)")
-              input(v-model="table.body[rowIndex][colIndex]" :ref="`input-${rowIndex}-${colIndex}`" @change="updateBodyData(rowIndex, colIndex)")
+              input(v-model="table.body[rowIndex][colIndex]" :ref="`input-${rowIndex}-${colIndex}`" :type="`${column[colIndex].type}`" :maxlength="`${column[colIndex].maxTextSize}`" @change="updateBodyData(rowIndex, colIndex)")
             template(v-else) {{ cell }}
       span(class="icon-reset" @click="reset()") ↻
 </template>
@@ -156,6 +156,7 @@ export default {
         this.$nextTick(() => {
           const el = this.$refs[`input-${row}-${col}`][0]
           el.focus()
+          console.log(this.column[col].type)
           el.addEventListener('focusout', () => {
             this.selectedBody = []
           })
@@ -228,6 +229,7 @@ export default {
     },
     reset () {
       this.table = format(this.data, this.form)
+      this.virtualColumn = this.column
     },
     insertRow (row, where) {
       if (where === 'Down') {
@@ -262,7 +264,7 @@ export default {
         }
         this.data = dataToArray(this.table)
       }
-      this.virtualColumn.splice(head, 0, { edit: true, sort: true, remove: true })
+      this.virtualColumn.splice(head, 0, { edit: true, sort: true, remove: true, type: 'text' })
       this.selectedBody = []
       this.selectedHead = []
     },
