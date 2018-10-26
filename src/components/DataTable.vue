@@ -44,8 +44,8 @@
           span(class="icon-add-row-up" @click="insertRow(rowIndex, 'Up')") ↱
         td(v-if="options.removeRow")
           span(class="icon-cross-row" @click="deleteRow(rowIndex)") ×
-        template(v-if="typeof options.tableStyle === 'object'")
-          td(v-for="(cell, colIndex) in row" @click="editBody(rowIndex, colIndex)"  :style="{color : options.tableStyle.fontColor, background : options.tableStyle.backgroundColor}")
+        template(v-if="typeof options.tableStyle === 'object' || hasColStyleAttribute(virtualColumn)")
+          td(v-for="(cell, colIndex) in row" @click="editBody(rowIndex, colIndex)"  :style="column[colIndex].colStyle === undefined ? {color : options.tableStyle.fontColor, background : options.tableStyle.backgroundColor} : {color : column[colIndex].colStyle.fontColor, background : column[colIndex].colStyle.backgroundColor}")
             template(v-if="!options.edit") {{ cell }}
             template(v-else-if="(selectedBody[0] === rowIndex && selectedBody[1] === colIndex)")
               input(v-model="table.body[rowIndex][colIndex]" :ref="`input-${rowIndex}-${colIndex}`" :type="`${column[colIndex].type}`" :maxlength="`${column[colIndex].maxTextSize}`" @change="updateBodyData(rowIndex, colIndex)")
@@ -307,6 +307,20 @@ export default {
         this.data.body[row][col] = this.table.body[row][col]
       }
       this.selectedBody = []
+    },
+    hasColStyleAttribute (array) {
+      let hasCol
+      let boolean = false
+      for (let i = 0; i < array.length; i++) {
+        if (array[i].colStyle !== undefined) {
+          hasCol = true
+        } else {
+          hasCol = false
+        }
+        boolean = boolean || hasCol
+      }
+      console.log(boolean)
+      return boolean
     }
   }
 }

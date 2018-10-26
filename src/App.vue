@@ -70,12 +70,22 @@ export default {
   .table-red {
     color: red;
     background: blue;
-    border-radius: 2px
   }
   .header-red {
     color: red;
     background: blue
   }
-
+  .column1 {
+    color: green;
+    background: red
+  }
+  .column2 {
+    color: blue;
+    background: yellow
+  }
+  .column3 {
+    color: grey;
+    background: black
+  }
 }
 </style>
