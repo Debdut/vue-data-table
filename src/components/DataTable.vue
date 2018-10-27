@@ -21,7 +21,7 @@
             template(v-if="options.filter")
               input(v-model="searchedValue" @change="filterTable(headerIndex)")
         template(v-else)
-          th(v-for="(cell, headerIndex) in table.header" @click="editHead(headerIndex)"  class="table-red")
+          th(v-for="(cell, headerIndex) in table.header" @click="editHead(headerIndex)"  class="header-red")
             template(v-if="options.addCol")
               span(class="icon-add-col-before" @click="insertCol(headerIndex, 'Before')") ↲
               span(class="icon-add-col-after" @click="insertCol(headerIndex, 'After')") ↳
@@ -51,7 +51,7 @@
               input(v-model="table.body[rowIndex][colIndex]" :ref="`input-${rowIndex}-${colIndex}`" :type="`${column[colIndex].type}`" :maxlength="`${column[colIndex].maxTextSize}`" @change="updateBodyData(rowIndex, colIndex)")
             template(v-else) {{ cell }}
         template(v-else)
-          td(v-for="(cell, colIndex) in row" @click="editBody(rowIndex, colIndex)"  class="header-red")
+          td(v-for="(cell, colIndex) in row" @click="editBody(rowIndex, colIndex)"  :class="(options.colClass === true) ? `column-${colIndex + 1}` : 'table-red'")
             template(v-if="!options.edit") {{ cell }}
             template(v-else-if="(selectedBody[0] === rowIndex && selectedBody[1] === colIndex)")
               input(v-model="table.body[rowIndex][colIndex]" :ref="`input-${rowIndex}-${colIndex}`" :type="`${column[colIndex].type}`" :maxlength="`${column[colIndex].maxTextSize}`" @change="updateBodyData(rowIndex, colIndex)")
@@ -124,7 +124,8 @@ export default {
       selectedBody: [],
       table: format(this.data, this.form),
       searchedValue: '',
-      virtualColumn: this.column
+      virtualColumn: this.column,
+      virtualRow: this.row
     }
   },
   props: {
@@ -139,7 +140,8 @@ export default {
       }
     },
     options: Object,
-    column: Array
+    column: Array,
+    row: Array
   },
   computed: {
     form () {
@@ -151,12 +153,11 @@ export default {
   },
   methods: {
     editBody (row, col) {
-      if (this.virtualColumn[col].edit === true) {
+      if (this.virtualColumn[col].edit === true && this.virtualRow[row].edit === true) {
         this.selectedBody = [row, col]
         this.$nextTick(() => {
           const el = this.$refs[`input-${row}-${col}`][0]
           el.focus()
-          console.log(this.column[col].type)
           el.addEventListener('focusout', () => {
             this.selectedBody = []
           })
@@ -241,6 +242,7 @@ export default {
       } else this.data.splice(row, 0, {})
 
       this.table.body.splice(row, 0, Array(this.table.header.length).fill(''))
+      this.virtualRow.splice(row, 0, { edit: true })
       this.selectedBody = []
     },
     insertCol (head, where) {
@@ -319,7 +321,6 @@ export default {
         }
         boolean = boolean || hasCol
       }
-      console.log(boolean)
       return boolean
     }
   }
@@ -327,5 +328,26 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="sass">
+<style lang="sass" scoped>
+
+.table-red
+  color: red
+  background: blue
+
+.header-red
+  color: red
+  background: blue
+
+.column-1
+  color: green
+  background: red
+
+.column-2
+  color: blue
+  background: yellow
+
+.column-3
+  color: grey
+  background: black
+
 </style>

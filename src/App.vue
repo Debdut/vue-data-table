@@ -1,6 +1,6 @@
 <template lang="pug">
   #app
-    data-table(:data="data1" :column="column" :options="{ edit: true , sort: true, removeRow: true, removeColumn: true, addRow: true, addCol: true, filter: true, tableStyle: { backgroundColor : '#e3e4e5', fontColor : '#4286f4'}, headerStyle: { backgroundColor : '#c6c3c2', fontColor : '#ef6976'}}")
+    data-table(:data="data1" :column="column" :row="row" :options="{ edit: true , sort: true, removeRow: true, removeColumn: true, addRow: true, addCol: true, filter: true, tableStyle: { backgroundColor : '#e3e4e5', fontColor : '#4286f4'}, headerStyle: { backgroundColor : '#c6c3c2', fontColor : '#ef6976'}, tabeClass: true, colClass: true}")
 
 </template>
 
@@ -37,7 +37,7 @@ export default {
           colStyle: { backgroundColor: 'red', fontColor: 'green' }
         },
         {
-          edit: true,
+          edit: false,
           sort: false,
           remove: false,
           type: 'number',
@@ -51,6 +51,17 @@ export default {
           type: 'text',
           maxTextSize: 10,
           colStyle: { backgroundColor: 'grey', fontColor: 'black' }
+        }
+      ],
+      row: [
+        {
+          edit: false
+        },
+        {
+          edit: false
+        },
+        {
+          edit: true
         }
       ]
     }
@@ -66,26 +77,5 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
-
-  .table-red {
-    color: red;
-    background: blue;
-  }
-  .header-red {
-    color: red;
-    background: blue
-  }
-  .column1 {
-    color: green;
-    background: red
-  }
-  .column2 {
-    color: blue;
-    background: yellow
-  }
-  .column3 {
-    color: grey;
-    background: black
-  }
 }
 </style>
