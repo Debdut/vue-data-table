@@ -55,13 +55,19 @@ export default {
       ],
       row: [
         {
-          edit: false
+          edit: false,
+          remove: true,
+          rowStyle: { backgroundColor: 'green', fontColor: 'red' }
         },
         {
-          edit: false
+          edit: false,
+          remove: false,
+          rowStyle: { backgroundColor: 'yellow', fontColor: 'blue' }
         },
         {
-          edit: true
+          edit: true,
+          remove: true,
+          rowStyle: { backgroundColor: 'black', fontColor: 'grey' }
         }
       ]
     }

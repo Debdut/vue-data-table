@@ -44,8 +44,8 @@
           span(class="icon-add-row-up" @click="insertRow(rowIndex, 'Up')") ↱
         td(v-if="options.removeRow")
           span(class="icon-cross-row" @click="deleteRow(rowIndex)") ×
-        template(v-if="typeof options.tableStyle === 'object' || hasColStyleAttribute(virtualColumn)")
-          td(v-for="(cell, colIndex) in row" @click="editBody(rowIndex, colIndex)"  :style="column[colIndex].colStyle === undefined ? {color : options.tableStyle.fontColor, background : options.tableStyle.backgroundColor} : {color : column[colIndex].colStyle.fontColor, background : column[colIndex].colStyle.backgroundColor}")
+        template(v-if="typeof options.tableStyle === 'object' || hasColStyleAttribute(virtualColumn) || hasrowStyleAttribute(virtualRow)")
+          td(v-for="(cell, colIndex) in row" @click="editBody(rowIndex, colIndex)"  :style="row[rowIndex].rowStyle === undefined ? (column[colIndex].colStyle === undefined ? {color : options.tableStyle.fontColor, background : options.tableStyle.backgroundColor} : {color : column[colIndex].colStyle.fontColor, background : column[colIndex].colStyle.backgroundColor}) : {color : row[rowIndex].rowStyle.fontColor, background : row[rowIndex].rowStyle.backgroundColor}")
             template(v-if="!options.edit") {{ cell }}
             template(v-else-if="(selectedBody[0] === rowIndex && selectedBody[1] === colIndex)")
               input(v-model="table.body[rowIndex][colIndex]" :ref="`input-${rowIndex}-${colIndex}`" :type="`${column[colIndex].type}`" :maxlength="`${column[colIndex].maxTextSize}`" @change="updateBodyData(rowIndex, colIndex)")
@@ -220,17 +220,21 @@ export default {
       this.selectedBody = []
     },
     deleteRow (row) {
-      let slicedArray = this.table.body.slice(row + 1, this.table.body.length)
-      this.table.body = this.table.body.slice(0, row)
+      if (this.virtualRow[row].remove === true) {
+        let slicedArray = this.table.body.slice(row + 1, this.table.body.length)
+        this.table.body = this.table.body.slice(0, row)
 
-      for (let i = 0; i < slicedArray.length; i++) {
-        this.table.body.push(slicedArray[i])
+        for (let i = 0; i < slicedArray.length; i++) {
+          this.table.body.push(slicedArray[i])
+        }
+        this.virtualRow.splice(row, 1)
       }
       this.selectedBody = []
     },
     reset () {
       this.table = format(this.data, this.form)
       this.virtualColumn = this.column
+      this.virtualRow = this.row
     },
     insertRow (row, where) {
       if (where === 'Down') {
@@ -242,7 +246,7 @@ export default {
       } else this.data.splice(row, 0, {})
 
       this.table.body.splice(row, 0, Array(this.table.header.length).fill(''))
-      this.virtualRow.splice(row, 0, { edit: true })
+      this.virtualRow.splice(row, 0, { edit: true, remove: true })
       this.selectedBody = []
     },
     insertCol (head, where) {
@@ -320,6 +324,20 @@ export default {
           hasCol = false
         }
         boolean = boolean || hasCol
+      }
+
+      return boolean
+    },
+    hasrowStyleAttribute (array) {
+      let hasRow
+      let boolean = false
+      for (let i = 0; i < array.length; i++) {
+        if (array[i].rowStyle !== undefined) {
+          hasRow = true
+        } else {
+          hasRow = false
+        }
+        boolean = boolean || hasRow
       }
       return boolean
     }
