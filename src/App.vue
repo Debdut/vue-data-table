@@ -1,6 +1,6 @@
 <template lang="pug">
   #app
-    data-table(:data="data1" :column="column" :row="row" :options="{ edit: true , sort: true, removeRow: true, removeColumn: true, addRow: true, addCol: true, filter: true, tableStyle: { backgroundColor : '#e3e4e5', fontColor : '#4286f4'}, headerStyle: { backgroundColor : '#c6c3c2', fontColor : '#ef6976'}, tabeClass: true, colClass: true}")
+    data-table(:data="data1" :column="column" :row="row" :options="{ edit: true , sort: true, removeRow: true, removeColumn: true, addRow: true, addCol: true, filter: true, tableStyle: { backgroundColor : '#e3e4e5', fontColor : '#4286f4'}, headerStyle: { backgroundColor : '#c6c3c2', fontColor : '#ef6976'}, tabeClass: true, colClass: true, rowClass: true}")
 
 </template>
 

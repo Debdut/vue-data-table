@@ -45,13 +45,13 @@
         td(v-if="options.removeRow")
           span(class="icon-cross-row" @click="deleteRow(rowIndex)") ×
         template(v-if="typeof options.tableStyle === 'object' || hasColStyleAttribute(virtualColumn) || hasrowStyleAttribute(virtualRow)")
-          td(v-for="(cell, colIndex) in row" @click="editBody(rowIndex, colIndex)"  :style="row[rowIndex].rowStyle === undefined ? (column[colIndex].colStyle === undefined ? {color : options.tableStyle.fontColor, background : options.tableStyle.backgroundColor} : {color : column[colIndex].colStyle.fontColor, background : column[colIndex].colStyle.backgroundColor}) : {color : row[rowIndex].rowStyle.fontColor, background : row[rowIndex].rowStyle.backgroundColor}")
+          td(v-for="(cell, colIndex) in row" @click="editBody(rowIndex, colIndex)"  :style="finalStyle(rowIndex, colIndex)")
             template(v-if="!options.edit") {{ cell }}
             template(v-else-if="(selectedBody[0] === rowIndex && selectedBody[1] === colIndex)")
               input(v-model="table.body[rowIndex][colIndex]" :ref="`input-${rowIndex}-${colIndex}`" :type="`${column[colIndex].type}`" :maxlength="`${column[colIndex].maxTextSize}`" @change="updateBodyData(rowIndex, colIndex)")
             template(v-else) {{ cell }}
         template(v-else)
-          td(v-for="(cell, colIndex) in row" @click="editBody(rowIndex, colIndex)"  :class="(options.colClass === true) ? `column-${colIndex + 1}` : 'table-red'")
+          td(v-for="(cell, colIndex) in row" @click="editBody(rowIndex, colIndex)"  :class="finalClass(rowIndex, colIndex)")
             template(v-if="!options.edit") {{ cell }}
             template(v-else-if="(selectedBody[0] === rowIndex && selectedBody[1] === colIndex)")
               input(v-model="table.body[rowIndex][colIndex]" :ref="`input-${rowIndex}-${colIndex}`" :type="`${column[colIndex].type}`" :maxlength="`${column[colIndex].maxTextSize}`" @change="updateBodyData(rowIndex, colIndex)")
@@ -340,6 +340,12 @@ export default {
         boolean = boolean || hasRow
       }
       return boolean
+    },
+    finalStyle (rowIndex, colIndex) {
+      return this.row[rowIndex].rowStyle !== undefined ? { color: this.row[rowIndex].rowStyle.fontColor, background: this.row[rowIndex].rowStyle.backgroundColor } : (this.column[colIndex].colStyle === undefined ? { color: this.options.tableStyle.fontColor, background: this.options.tableStyle.backgroundColor } : { color: this.column[colIndex].colStyle.fontColor, background: this.column[colIndex].colStyle.backgroundColor })
+    },
+    finalClass (rowIndex, colIndex) {
+      return this.options.rowClass === true ? `row-${rowIndex + 1}` : (this.options.colClass === true ? `column-${colIndex + 1}` : 'table-red')
     }
   }
 }
@@ -348,11 +354,11 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="sass" scoped>
 
-.table-red
+.header-red
   color: red
   background: blue
 
-.header-red
+.table-red
   color: red
   background: blue
 
@@ -361,10 +367,22 @@ export default {
   background: red
 
 .column-2
+  color: yellow
+  background: blue
+
+.column-3
+  color: black
+  background: grey
+
+.row-1
+  color: red
+  background: green
+
+.row-2
   color: blue
   background: yellow
 
-.column-3
+.row-3
   color: grey
   background: black
 
