@@ -1,6 +1,6 @@
 <template lang="pug">
   #app
-    data-table(:data="data1" :column="column" :row="row" :options="{ edit: true , sort: true, removeRow: true, removeColumn: true, addRow: true, addCol: true, filter: true, tableStyle: { backgroundColor : '#e3e4e5', fontColor : '#4286f4'}, headerStyle: { backgroundColor : '#c6c3c2', fontColor : '#ef6976'}, tabeClass: true, colClass: true, rowClass: true}")
+    data-table(:data="data1" :column="column" :row="row" :cell="cell" :options="{ edit: true , sort: true, removeRow: true, removeColumn: true, addRow: true, addCol: true, filter: true, tableStyle: { backgroundColor : '#e3e4e5', fontColor : '#4286f4'}, headerStyle: { backgroundColor : '#c6c3c2', fontColor : '#ef6976'}, tabeClass: true, colClass: true, rowClass: true, cellClass: true}")
 
 </template>
 
@@ -37,9 +37,9 @@ export default {
           colStyle: { backgroundColor: 'red', fontColor: 'green' }
         },
         {
-          edit: false,
-          sort: false,
-          remove: false,
+          edit: true,
+          sort: true,
+          remove: true,
           type: 'number',
           maxTextSize: 10,
           colStyle: { backgroundColor: 'blue', fontColor: 'yellow' }
@@ -55,13 +55,13 @@ export default {
       ],
       row: [
         {
-          edit: false,
+          edit: true,
           remove: true,
           rowStyle: { backgroundColor: 'green', fontColor: 'red' }
         },
         {
-          edit: false,
-          remove: false,
+          edit: true,
+          remove: true,
           rowStyle: { backgroundColor: 'yellow', fontColor: 'blue' }
         },
         {
@@ -69,6 +69,43 @@ export default {
           remove: true,
           rowStyle: { backgroundColor: 'black', fontColor: 'grey' }
         }
+      ],
+      cell: [
+        [
+          {
+            edit: false,
+            cellStyle: { backgroundColor: 'white', fontColor: 'white' }
+          },
+          {
+            edit: false
+          },
+          {
+            edit: true
+          }
+        ],
+        [
+          {
+            edit: true
+          },
+          {
+            edit: true,
+            cellStyle: { backgroundColor: 'black', fontColor: 'black' }
+          },
+          {
+            edit: true
+          }
+        ],
+        [
+          {
+            edit: true
+          },
+          {
+            edit: true
+          },
+          {
+            edit: true
+          }
+        ]
       ]
     }
   }

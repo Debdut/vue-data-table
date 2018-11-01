@@ -44,7 +44,7 @@
           span(class="icon-add-row-up" @click="insertRow(rowIndex, 'Up')") ↱
         td(v-if="options.removeRow")
           span(class="icon-cross-row" @click="deleteRow(rowIndex)") ×
-        template(v-if="typeof options.tableStyle === 'object' || hasColStyleAttribute(virtualColumn) || hasrowStyleAttribute(virtualRow)")
+        template(v-if="typeof options.tableStyle === 'object' || hasColStyleAttribute(virtualColumn) || hasrowStyleAttribute(virtualRow) || hascellStyleAttribute(virtualCell)")
           td(v-for="(cell, colIndex) in row" @click="editBody(rowIndex, colIndex)"  :style="finalStyle(rowIndex, colIndex)")
             template(v-if="!options.edit") {{ cell }}
             template(v-else-if="(selectedBody[0] === rowIndex && selectedBody[1] === colIndex)")
@@ -125,7 +125,8 @@ export default {
       table: format(this.data, this.form),
       searchedValue: '',
       virtualColumn: this.column,
-      virtualRow: this.row
+      virtualRow: this.row,
+      virtualCell: this.cell
     }
   },
   props: {
@@ -141,7 +142,8 @@ export default {
     },
     options: Object,
     column: Array,
-    row: Array
+    row: Array,
+    cell: Array
   },
   computed: {
     form () {
@@ -153,7 +155,7 @@ export default {
   },
   methods: {
     editBody (row, col) {
-      if (this.virtualColumn[col].edit === true && this.virtualRow[row].edit === true) {
+      if (this.virtualColumn[col].edit === true && this.virtualRow[row].edit === true && this.virtualCell[row][col].edit === true) {
         this.selectedBody = [row, col]
         this.$nextTick(() => {
           const el = this.$refs[`input-${row}-${col}`][0]
@@ -246,6 +248,7 @@ export default {
       } else this.data.splice(row, 0, {})
 
       this.table.body.splice(row, 0, Array(this.table.header.length).fill(''))
+      this.virtualCell.splice(row, 0, [{ edit: true }, { edit: true }, { edit: true }])
       this.virtualRow.splice(row, 0, { edit: true, remove: true })
       this.selectedBody = []
     },
@@ -269,6 +272,9 @@ export default {
           this.table.body[i].splice(head, 0, '')
         }
         this.data = dataToArray(this.table)
+      }
+      for (let i = 0; i < this.virtualCell.length; i++) {
+        this.virtualCell[i].splice(1, 0, { edit: true })
       }
       this.virtualColumn.splice(head, 0, { edit: true, sort: true, remove: true, type: 'text' })
       this.selectedBody = []
@@ -341,11 +347,26 @@ export default {
       }
       return boolean
     },
+    hascellStyleAttribute (array) {
+      let hasCol
+      let boolean = false
+      for (let i = 0; i < array.length; i++) {
+        for (let j = 0; j < array[i].length; j++) {
+          if (array[i][j].cellStyle !== undefined) {
+            hasCol = true
+          } else {
+            hasCol = false
+          }
+          boolean = boolean || hasCol
+        }
+      }
+      return boolean
+    },
     finalStyle (rowIndex, colIndex) {
-      return this.row[rowIndex].rowStyle !== undefined ? { color: this.row[rowIndex].rowStyle.fontColor, background: this.row[rowIndex].rowStyle.backgroundColor } : (this.column[colIndex].colStyle === undefined ? { color: this.options.tableStyle.fontColor, background: this.options.tableStyle.backgroundColor } : { color: this.column[colIndex].colStyle.fontColor, background: this.column[colIndex].colStyle.backgroundColor })
+      return this.cell[rowIndex][colIndex].cellStyle !== undefined ? { color: this.cell[rowIndex][colIndex].cellStyle.fontColor, background: this.cell[rowIndex][colIndex].cellStyle.backgroundColor } : (this.row[rowIndex].rowStyle !== undefined ? { color: this.row[rowIndex].rowStyle.fontColor, background: this.row[rowIndex].rowStyle.backgroundColor } : (this.column[colIndex].colStyle === undefined ? { color: this.options.tableStyle.fontColor, background: this.options.tableStyle.backgroundColor } : { color: this.column[colIndex].colStyle.fontColor, background: this.column[colIndex].colStyle.backgroundColor }))
     },
     finalClass (rowIndex, colIndex) {
-      return this.options.rowClass === true ? `row-${rowIndex + 1}` : (this.options.colClass === true ? `column-${colIndex + 1}` : 'table-red')
+      return this.options.cellClass === true ? `cell-${rowIndex + 1}-${colIndex + 1}` : (this.options.rowClass === true ? `row-${rowIndex + 1}` : (this.options.colClass === true ? `column-${colIndex + 1}` : 'table-red'))
     }
   }
 }
@@ -385,5 +406,13 @@ export default {
 .row-3
   color: grey
   background: black
+
+.cell-1-1
+    color: white
+    background: white
+
+.cell-2-2
+    color: black
+    background: black
 
 </style>
