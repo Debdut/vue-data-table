@@ -17,7 +17,7 @@ export default {
       data1: {
         header: ['name', 'age', 'job'],
         body: [
-          ['debdut', 23, 'NA'],
+          ['debdut', 15, 'NA'],
           ['saikat', 20, 'NA'],
           ['babu', 11, 'NA']
         ]
@@ -73,11 +73,11 @@ export default {
       cell: [
         [
           {
-            edit: false,
+            edit: true,
             cellStyle: { backgroundColor: 'white', fontColor: 'white' }
           },
           {
-            edit: false
+            edit: true
           },
           {
             edit: true

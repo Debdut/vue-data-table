@@ -232,6 +232,8 @@ export default {
         this.virtualRow.splice(row, 1)
       }
       this.selectedBody = []
+      // console.log(this.table.body)
+      // console.log(this.data.body)
     },
     reset () {
       this.table = format(this.data, this.form)
@@ -281,20 +283,21 @@ export default {
       this.selectedHead = []
     },
     filterTable (head) {
-      console.log('hello')
+      // console.log('hello')
       if (this.form === 'object') {
         for (let i = 0; i < this.data.body.length; i++) {
-          console.log(`${this.data.body[i][head]}`)
-          console.log(`${this.searchedValue}`)
-          console.log(head)
+          // console.log(`${this.data.body[i][head]}`)
+          // console.log(`${this.searchedValue}`)
+          // console.log(head)
           if (`${this.data.body[i][head]}`.includes(`${this.searchedValue}`) === false) {
-            // for (let j = 0; j < this.data.body.length; j++) {
-            //   for (let k = 0; k < this.data.header.length; k++) {
-            //     if (`${this.data.body[i][head]}` === `${this.data.body[j][k]}`) {
-            this.deleteRow(i)
-            //     }
-            //   }
-            // }
+            // console.log(false)
+            for (let j = 0; j < this.data.body.length; j++) {
+              for (let k = 0; k < this.data.header.length; k++) {
+                if (`${this.data.body[i][head]}` === `${this.data.body[j][k]}`) {
+                  this.deleteRow(i)
+                }
+              }
+            }
           }
         }
       }
